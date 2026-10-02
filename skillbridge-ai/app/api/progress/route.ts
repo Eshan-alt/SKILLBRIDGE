@@ -1,0 +1,7 @@
+import {NextResponse} from 'next/server';
+import {database} from '@/lib/mongodb';
+import {session,sameOrigin} from '@/lib/session';
+import {recordSchema} from '@/lib/practice';
+export const runtime='nodejs';
+export async function GET(){try{const userId=await session();const db=await database();if(!db)return NextResponse.json({records:[],storage:'local'});const records=await db.collection('practice').find({userId},{projection:{_id:0,userId:0}}).sort({date:-1}).limit(200).toArray();return NextResponse.json({records,storage:'mongodb'});}catch{return NextResponse.json({error:'MongoDB could not be reached. Check your connection string.'},{status:503});}}
+export async function POST(request:Request){if(!sameOrigin(request))return NextResponse.json({error:'Invalid origin.'},{status:403});try{const parsed=recordSchema.safeParse(await request.json());if(!parsed.success)return NextResponse.json({error:'Invalid practice record.'},{status:400});const userId=await session();const db=await database();if(!db)return NextResponse.json({storage:'local'});await db.collection('practice').createIndex({userId:1,id:1},{unique:true});await db.collection('practice').updateOne({userId,id:parsed.data.id},{$setOnInsert:{...parsed.data,userId}},{upsert:true});return NextResponse.json({storage:'mongodb'});}catch{return NextResponse.json({error:'Your result is saved locally, but database sync failed.'},{status:503});}}

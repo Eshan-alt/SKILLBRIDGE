@@ -1,0 +1,7 @@
+import {NextResponse} from 'next/server';
+import {z} from 'zod';
+import {currentUser} from '@/lib/accounts';
+import {verifySignature,razorpay,syncSubscription,billingConfigured} from '@/lib/billing';
+import {sameOrigin} from '@/lib/session';
+const schema=z.object({razorpay_payment_id:z.string().regex(/^pay_[a-zA-Z0-9]+$/),razorpay_subscription_id:z.string().regex(/^sub_[a-zA-Z0-9]+$/),razorpay_signature:z.string().regex(/^[a-f0-9]{64}$/)});
+export async function POST(req:Request){if(!sameOrigin(req))return NextResponse.json({error:'Invalid origin.'},{status:403});try{const user=await currentUser();if(!user)return NextResponse.json({error:'Sign in first.'},{status:401});if(!billingConfigured())return NextResponse.json({error:'Billing is not configured.'},{status:503});const p=schema.safeParse(await req.json());if(!p.success)return NextResponse.json({error:'Invalid payment response.'},{status:400});const d=p.data;if(user.billingPending!==d.razorpay_subscription_id||!verifySignature(`${d.razorpay_payment_id}|${user.billingPending}`,d.razorpay_signature,process.env.RAZORPAY_KEY_SECRET!))return NextResponse.json({error:'Payment verification failed.'},{status:400});const sub=await razorpay(`subscriptions/${user.billingPending}`);const active=await syncSubscription(sub);return NextResponse.json({active,message:active?'Your Pro plan is active.':'Authorization received. Your plan activates after the first successful charge.'});}catch{return NextResponse.json({error:'Could not verify payment. Your plan will sync through the payment webhook.'},{status:503});}}

@@ -1,0 +1,1 @@
+{"version":"2.0.0","tasks":[{"label":"SkillBridge: live preview","type":"shell","command":"npm run dev","isBackground":true,"problemMatcher":[],"presentation":{"reveal":"always","panel":"dedicated"}},{"label":"SkillBridge: verify","type":"shell","command":"npm run test && npm run build","problemMatcher":[]}]}

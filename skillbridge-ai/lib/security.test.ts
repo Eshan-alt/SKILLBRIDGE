@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {createHmac} from 'node:crypto';
+import {hashPassword,checkPassword} from './accounts';
+import {verifySignature} from './billing';
+import {registerSchema} from './auth-validation';
+import {sameOrigin} from './session';
+test('passwords are salted and wrong passwords are rejected',async()=>{const a=await hashPassword('TestPassword123');const b=await hashPassword('TestPassword123');assert.notEqual(a,b);assert(await checkPassword('TestPassword123',a));assert.equal(await checkPassword('WrongPassword123',a),false);});
+test('registration normalizes email and rejects weak passwords',()=>{const p=registerSchema.parse({name:'Test User',email:'TEST@EXAMPLE.COM',password:'TestPassword123'});assert.equal(p.email,'test@example.com');assert.equal(registerSchema.safeParse({name:'A',email:'bad',password:'123'}).success,false);});
+test('billing signatures reject tampering and malformed signatures',()=>{const payload='pay_example|sub_example';const secret='test-secret';const signature=createHmac('sha256',secret).update(payload).digest('hex');assert(verifySignature(payload,signature,secret));assert.equal(verifySignature(payload+'changed',signature,secret),false);assert.equal(verifySignature(payload,'bad',secret),false);});
+test('same-origin check supports Next internal URLs and rejects foreign origins',()=>{assert(sameOrigin(new Request('http://localhost:3000/api/questions',{headers:{host:'127.0.0.1:3000',origin:'http://127.0.0.1:3000'}})));assert.equal(sameOrigin(new Request('http://localhost:3000/api/questions',{headers:{host:'127.0.0.1:3000',origin:'https://unrelated.example'}})),false);});
