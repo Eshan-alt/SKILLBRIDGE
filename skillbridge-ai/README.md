@@ -114,3 +114,5 @@ New interview sessions preserve submitted questions, answers, and feedback in pr
 - `/interviews`: choose technical or behavioral interviews. Behavioral prompts cover teamwork, conflict, failure, ownership, prioritization, feedback, leadership, and adaptability; existing transcript review and feedback work with both.
 
 Mock interviews support Foundation/Standard/Advanced question depth, pause/resume, word counts and browser recovery of unfinished sessions. Recovery is per account and starts paused. See DEPLOYMENT.md for hosting and domain setup.
+
+Resume builder includes up to 10 named snapshots and validated JSON backup/import. Coding practice includes browser-saved complexity and reasoning notes per problem. Interview feedback includes answer revision and re-review; only the final answer/feedback are stored in the session transcript. Additional AI reviews consume the advertised request allowance.

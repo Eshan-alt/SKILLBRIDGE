@@ -29,3 +29,6 @@ Environment: local development preview at http://127.0.0.1:3000, local account s
 
 ## Remaining verification
 Live OpenAI/provider responses, MongoDB cloud persistence/concurrency, Razorpay payment/renewal/cancellation/webhooks, real microphone recording and audible speech playback require their respective configuration or interactive hardware tests. They are not claimed as verified by this local audit. Synthetic browser data remains under its isolated test-account storage keys; the temporary server account and its sessions were removed.
+
+## Additional preparation features
+47 unit tests pass, including resume backup round-trip, invalid/oversized import rejection, and version-library validation. Browser confirmed named snapshot creation, backup download link, problem-specific coding-note persistence and interview revision unlocking the preserved answer. JSON import validation was tested in code; native file selection was not exercised. All added saved data is browser-local and account-scoped.
