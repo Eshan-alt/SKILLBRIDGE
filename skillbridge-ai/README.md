@@ -15,14 +15,15 @@ Open [the live preview](http://127.0.0.1:3000). The development server updates t
 ## Pages
 
 - `/`: overview, saved activity, practice statistics, and learning illustration.
-- `/interviews`: role selection, fresh questions at each step, visible answer submission, feedback, hints, and saved three-question sessions.
-- `/coding`: 500 runnable DSA exercises, search, difficulty filters, pagination, code editor, test results, and next-unpracticed selection.
+- `/interviews`: role selection, optional two- or five-minute answer targets, fresh questions at each step, visible answer submission, feedback, hints, and saved three-question sessions.
+- `/coding`: 500 runnable DSA exercises, search, difficulty filters, pagination, code editor, test results, next-unpracticed selection, and account-separated browser bookmarks, and automatic solution drafts (up to 30 recent problems).
 - `/communication`: typed or spoken communication practice, spoken prompts, follow-ups, coach notes, and saved unscored sessions.
-- `/progress`: history filters, score chart, milestones, streaks, and CSV export.
+- `/applications`: stages, notes, follow-up reminders, search, account sync when MongoDB is configured, and reversible archiving.
+- `/progress`: weekly goals and activity-based practice recommendations; history filters, score chart, milestones, streaks, CSV export, and saved question-by-question interview reviews with downloadable notes.
 - `/resources`: illustrated guides for STAR answers, DSA techniques, and technical communication.
 - `/subscription`: Free and ₹399 INR/month Pro plans, payment setup state, and renewal cancellation for active subscriptions.
 - `/settings`: account details and connection status.
-- `/resume`: guided resume builder, editable sections, completeness checklist, autosaved draft, live ATS-friendly preview, and PDF export. The starting summary uses a local template; it is not AI-generated. Example content is explicitly loaded by the user. Export is Latin-script only, and unsupported characters produce a readable error.
+- `/resume`: guided resume builder, editable sections, completeness checklist, autosaved draft, classic academic serif preview, education-first order, responsibility and achievement sections, and clickable PDF links. The starting summary uses a local template; it is not AI-generated. Example content is explicitly loaded by the user. Export is Latin-script only, and unsupported characters produce a readable error.
 - `/login` and `/register`: working password authentication with validation and readable errors.
 
 ## What works without external credentials
@@ -101,4 +102,15 @@ Browser checks include three-step interview completion, code execution, infinite
 
 ## Before public production deployment
 
-Configure MongoDB and a proper secret environment. The local file store is not suitable for multiple server instances. Add email verification and account recovery, move rate limits to shared storage, and replace the local worker with a dedicated isolated execution service if handling adversarial submissions. Browser workers prevent UI freezes but are **not a hostile-code security sandbox**. Scores and credits are not authoritative exam results.
+Production requires MongoDB and refuses local account storage. Shared MongoDB request counters and checkout leases support multiple application instances. The Pro AI allowance is 300 requests per UTC calendar month by default (`AI_MONTHLY_REQUEST_LIMIT`). Configure MongoDB and a proper secret environment. The local file store is not suitable for multiple server instances. Add email verification and account recovery, replace the local worker with a dedicated isolated execution service if handling adversarial submissions. Browser workers prevent UI freezes but are **not a hostile-code security sandbox**. Scores and credits are not authoritative exam results.
+
+See [LAUNCH.md](../LAUNCH.md) for deployment checks, the remaining account recovery work, and how to validate costs before accepting real payments.
+
+New interview sessions preserve submitted questions, answers, and feedback in progress records. Older sessions retain their original summary and are marked as lacking detailed answers. Solution drafts remain on the current browser; they are not synced to MongoDB. Resetting a solution clears that problem’s saved draft after confirmation.
+
+### Role preparation tools
+- `/stories`: guided STAR story library with competency tags, search, editing, and account-scoped browser storage (up to 50 stories). No cloud sync for stories.
+- `/job-fit`: compare pasted job descriptions against your resume draft or pasted experience using a bounded skill dictionary. Browser processing; keyword coverage only, not an ATS or hiring score.
+- `/interviews`: choose technical or behavioral interviews. Behavioral prompts cover teamwork, conflict, failure, ownership, prioritization, feedback, leadership, and adaptability; existing transcript review and feedback work with both.
+
+Mock interviews support Foundation/Standard/Advanced question depth, pause/resume, word counts and browser recovery of unfinished sessions. Recovery is per account and starts paused. See DEPLOYMENT.md for hosting and domain setup.

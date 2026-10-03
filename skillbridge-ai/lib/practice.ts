@@ -21,7 +21,9 @@ export function practiceFeedback(role:string,index:number,answer:string,custom?:
  const detailed=answer.trim().split(/\s+/).length>=60;
  return {score:Math.min(95,20+found.length*15+(detailed?15:0)),strengths:[found.length?`You mentioned ${found.join(', ')}—useful signals for this question.`:'You completed the first step by explaining your approach.',detailed?'Your answer has enough detail to develop a clear argument.':'Your response is concise.'],improvements:[q.hint, 'Include a concrete example, a trade-off, and how you would verify the result.'],followUp:`How would you test your approach, and what failure case would you check first?`};
 }
-export const recordSchema=z.object({id:z.string().uuid(),kind:z.enum(['interview','coding','communication']),title:z.string().min(1).max(160),score:z.number().min(0).max(100),date:z.string().datetime(),duration:z.number().int().min(0).max(86400),mode:z.enum(['practice','ai','tests']),details:z.string().max(500)});
+export const reviewAnswerSchema=z.object({question:z.string().min(1).max(1200),answer:z.string().max(6000),feedback:feedbackSchema,mode:z.enum(['practice','ai'])});
+export type ReviewAnswer=z.infer<typeof reviewAnswerSchema>;
+export const recordSchema=z.object({id:z.string().uuid(),kind:z.enum(['interview','coding','communication']),title:z.string().min(1).max(160),score:z.number().min(0).max(100),date:z.string().datetime(),duration:z.number().int().min(0).max(86400),mode:z.enum(['practice','ai','tests']),details:z.string().max(500),transcript:z.array(reviewAnswerSchema).min(1).max(3).optional()}).refine(record=>!record.transcript||record.kind==='interview','Only interview records can include transcripts.');
 export type PracticeRecord=z.infer<typeof recordSchema>;
 export function streak(records:PracticeRecord[]){const days=new Set(records.map(r=>new Date(r.date).toLocaleDateString('en-CA')));let count=0;const d=new Date();if(!days.has(d.toLocaleDateString('en-CA')))d.setDate(d.getDate()-1);while(days.has(d.toLocaleDateString('en-CA'))){count++;d.setDate(d.getDate()-1);}return count;}
 export const challenges=[

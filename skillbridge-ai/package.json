@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "tsc --noEmit",
-    "test": "node --import tsx --test lib/*.test.ts"
+    "test": "node --import tsx --test lib/*.test.ts",
+    "check:deploy": "node scripts/preflight.mjs"
   },
   "dependencies": {
     "lucide-react": "latest",
